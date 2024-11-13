@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class AN_Viewer : MonoBehaviour
 {
@@ -13,12 +13,23 @@ public class AN_Viewer : MonoBehaviour
     float xmouse, ymouse, yRotation, Speed, upaxe, rotate_on_key;
 
     [SerializeField] GameObject player;
-    private Player playerScript;
+    [SerializeField] private AudioClip audiosteps = null;
+    private AudioSource perso_audiosource;
+    private bool isMoving;
+
+
+    private void Awake(){
+        perso_audiosource = GetComponent<AudioSource>(); 
+        perso_audiosource.clip = audiosteps; // Assigner le clip des pas à l'AudioSource
+        perso_audiosource.loop = true; // Activer la boucle pour les pas
+        perso_audiosource.volume = 2f;
+
+    }
 
     void Start()
     {
-        playerScript = player.GetComponent<Player>();
         Cam = transform.GetChild(0).transform;
+
         if (HideCursor)
         {
             Cursor.lockState = CursorLockMode.Locked; // freeze cursor on screen centre
@@ -28,24 +39,15 @@ public class AN_Viewer : MonoBehaviour
 
     void Update() // camera rotation
     {
-        if (!playerScript.inGame)
-        {
-            //axis
-            xmouse = Input.GetAxis("Mouse X") * Time.deltaTime * Sensitivity;
-            ymouse = Input.GetAxis("Mouse Y") * Time.deltaTime * Sensitivity;
+        //axis
+        xmouse = Input.GetAxis("Mouse X") * Time.deltaTime * Sensitivity;
+        ymouse = Input.GetAxis("Mouse Y") * Time.deltaTime * Sensitivity;
 
-        }
-        else
-        {
-            xmouse = 0;
-            ymouse = 0;
-        }
-        
         // rotation by keys RT
         if (Input.GetKey(KeyCode.R)) rotate_on_key = -RotateSpeed * Time.deltaTime;
         else if (Input.GetKey(KeyCode.T)) rotate_on_key = RotateSpeed * Time.deltaTime;
         else rotate_on_key = 0f;
-        
+
         // result rotation
         transform.Rotate(Vector3.up * (xmouse + rotate_on_key));
         yRotation -= ymouse;
@@ -67,5 +69,17 @@ public class AN_Viewer : MonoBehaviour
             Cam.up * upaxe;
         Move *= Time.deltaTime;
         player.transform.position += Move;
+
+        
+        isMoving = Move != Vector3.zero;
+        if (isMoving && !perso_audiosource.isPlaying)
+        {
+            perso_audiosource.Play(); // Jouer le son si le joueur commence à bouger
+        }
+        else if (!isMoving && perso_audiosource.isPlaying)
+        {
+            perso_audiosource.Stop(); // Arrêter le son si le joueur s'arrête
+        }
+        
     }
 }

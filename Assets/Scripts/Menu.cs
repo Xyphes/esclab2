@@ -69,6 +69,8 @@ public class Menu : MonoBehaviour
     
     void onClickPause()
     {
+    	// Stop the counter
+    
         pauseMenu.SetActive(true);
         menu.SetActive(false);
         optionMenu.SetActive(false);
@@ -80,6 +82,8 @@ public class Menu : MonoBehaviour
     
     void onClickCancel()
     {
+    	// Continue the counter
+    
         pauseMenu.SetActive(false);
         menu.SetActive(false);
         optionMenu.SetActive(false);
@@ -125,11 +129,11 @@ public class Menu : MonoBehaviour
     
     void onClickMusic()
     {
-        // 
+        // Activate or disactive the background music
     }
     
     void onClickSon()
     {
-        // 
+        // Activate or disactivate the click son
     }
 }
